@@ -1,0 +1,52 @@
+﻿Changelog
+15/07/2019
+	+ Created program
+	+ Can now relay NEXT, PREV and PAUSE commands
+	+ Displays test data on LCD
+
+16/07/2019
+	+ Now relays volume command
+	+ Now relays title, artist, album, length, current time and current volume from VLC
+	+ Displays volume, title, artist, length and current time on LCD
+	
+17/07/2019
+	- No longer gets relays volume from VLC
+	+ Keeps track of shuffle and repeat modes
+	+ Now Displays progress in track along bar
+	+ LCD display is now properly formatted, with ellipses if lines are too long
+	+ Prev button now returns to start of track if not near beginning
+
+18/07/2019
+	+ Created double-character icons for volume, shuffle and repeat modes
+	+ Created icon for Data Relay program
+	+ If metadata field not present, a substitute is now used
+	+ Now checks if both the start and the end of the TCP transmission from VLC is present, if not it discards the data
+
+19/07/2019
+	+ Added backlight control to the remote, using a modifier switch
+
+20/07/2019
+	+ Program now asks for vlc.exe path and port number on first run
+	+ Now connects to remote and VLC automatically, if VLC not present with correct parameters it is launched
+
+26/07/2019
+	+ Program now disposes of icon when closed
+	+ Remote displays message when not connected
+	+ Updates remote with correct volume on startup
+	+ Data Relay exits when VLC closed or remote disconnected
+
+07/08/2019
+	+ Updated volume to work with 0 - 125
+
+08/08/2019
+	+ Now shows 00:00 time on track change
+	+ Added information box
+
+08/09/2019
+	+ Fixed crash on startup
+
+28/09/2019
+	+ Properly displays data for files with lots of information
+
+01/10/2019
+	+ Implemented settings menu to change hostname, port and VLC path at will

@@ -1,0 +1,17 @@
+D:\Desktop\Data Relay\Data Relay\Data Relay\bin\Debug\Data Relay.exe.config
+D:\Desktop\Data Relay\Data Relay\Data Relay\bin\Debug\Data Relay.exe
+D:\Desktop\Data Relay\Data Relay\Data Relay\bin\Debug\Data Relay.pdb
+D:\Desktop\Data Relay\Data Relay\Data Relay\bin\Debug\Data Relay.xml
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data_Relay.Form1.resources
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data_Relay.Resources.resources
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data Relay.vbproj.GenerateResource.cache
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data Relay.vbproj.CoreCompileInputs.cache
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data Relay.exe
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data Relay.xml
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data Relay.pdb
+D:\Desktop\Data Relay\Data Relay\Data Relay\bin\Debug\Data Relay.exe.manifest
+D:\Desktop\Data Relay\Data Relay\Data Relay\bin\Debug\Data Relay.application
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data Relay.exe.manifest
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data Relay.application
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data Relay.vbprojAssemblyReference.cache
+D:\Desktop\Data Relay\Data Relay\Data Relay\obj\Debug\Data_Relay.Settings.resources
