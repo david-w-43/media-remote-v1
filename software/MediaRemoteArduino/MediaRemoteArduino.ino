@@ -1,5 +1,5 @@
 /*
-   USB Serial Communicator v1.1
+   USB Serial Communicator v1.3
 
    This program takes input from five PTM switches and a clickable rotary encoder to control
     - Next
@@ -88,10 +88,9 @@ const int BACKLIGHT_STEP = 255 / 8;
 
 //Checks if connected
 bool isConnected = false;
-bool isPlaying = false;
-bool prevPlaying = true;
 
 //Custom characters
+//Ellipsis
 const byte ellipsis[] = {
   B00000,
   B00000,
@@ -103,6 +102,7 @@ const byte ellipsis[] = {
   B00000
 };
 
+//First half of shuffle icon
 const byte shuff1[] = {
   B00000,
   B01100,
@@ -114,6 +114,7 @@ const byte shuff1[] = {
   B00000
 };
 
+//Second half of shuffle icon
 const byte shuff2[] = {
   B00010,
   B01111,
@@ -125,6 +126,7 @@ const byte shuff2[] = {
   B00000
 };
 
+//First half of repeat icon - common between repeat modes
 const byte repeat1[] = {
   B00000,
   B00111,
@@ -136,6 +138,7 @@ const byte repeat1[] = {
   B00100
 };
 
+//Second half of repeat all
 const byte repeat2[] = {
   B00100,
   B11110,
@@ -147,6 +150,7 @@ const byte repeat2[] = {
   B00000
 };
 
+//Second half of repeat single
 const byte repeat3[] = {
   B00100,
   B11110,
@@ -158,6 +162,7 @@ const byte repeat3[] = {
   B00001
 };
 
+//First half of volume icon
 const byte speaker[] = {
   B00000,
   B00001,
@@ -169,6 +174,7 @@ const byte speaker[] = {
   B00000
 };
 
+//Second half of volume icon
 const byte volume3[] = {
   B00010,
   B01001,
@@ -194,7 +200,6 @@ Encoder encoder(ENC_CLK, ENC_DT); //Define 'encoder', running on the interrupt p
 struct metas {
   String title;
   String artist;
-  String album;
   unsigned int timeLength;
 } metadata;
 
@@ -239,6 +244,7 @@ void setup() {
 
   //Display startup message
   showStartupMessage();
+  //Set backlight
   analogWrite(PIN_BACKLIGHT, round(backlightLevel * BACKLIGHT_STEP));
 
 
@@ -262,6 +268,7 @@ void setup() {
 
 //-----------------------------------------------------------------------
 
+//Initialise previous value variables as false
 bool oldState_NEXT = false;
 bool oldState_PREV = false;
 bool oldState_SHUF = false;
@@ -282,7 +289,7 @@ void serialEvent() {                                                     //When 
 
     displayTime();
     
-  } //else 
+  }
   if (receivedData.indexOf("META:") != -1) {                                //If string contains metadata (also new file)
     
     startPosition = receivedData.indexOf("\n", receivedData.indexOf("META:")) + 1;                   //Find the start position of the title
@@ -310,7 +317,6 @@ void serialEvent() {                                                     //When 
 
     startPosition = receivedData.indexOf("\n", receivedData.indexOf("PARA:")) + 1;                   //Find the start position of the volume
     endPosition = receivedData.indexOf("\n", startPosition);             //Find the end of the volume
-    //playback.currentVolume = receivedData.substring(startPosition, endPosition).toInt(); //Set volume to substring
 
 
     startPosition = receivedData.indexOf("\n", endPosition) + 1;         //Find the start position of the shuffle state
@@ -329,12 +335,10 @@ void serialEvent() {                                                     //When 
     playback.repeatMode = receivedData.substring(startPosition, endPosition).toInt();
     Serial.println(String("MODE: " + String(playback.repeatMode)));
 
-    //encoder.write(playback.currentVolume);
-
     displayRepeatShuffle();
     displayVolume();
   }
-  if (receivedData.indexOf("HANDSHAKE") != -1) {
+  if (receivedData.indexOf("HANDSHAKE") != -1) { //To indicate to the Data Relay that it has found the right device
     Serial.println("SHAKEN");
     lcd.clear();
     displayVolume();
@@ -344,15 +348,6 @@ void serialEvent() {                                                     //When 
     showStartupMessage();
     isConnected = false;
   }
-//  else if (receivedData.indexOf("PLAYING")) {
-//    isPlaying = true;
-//  }
-//  else if (receivedData.indexOf("NOMEDIA")) {
-//    lcd.clear();
-//    lcd.setCursor(2,1);
-//    lcd.print("No media playing");
-//    isPlaying = false;
-//  }
    if (receivedData.indexOf("VOL:") != -1) {
     startPosition = receivedData.indexOf("\n", receivedData.indexOf("VOL:")) + 1;                   //Find the start position of the volume
     endPosition = receivedData.indexOf("\n", startPosition);             //Find the end of the volume
@@ -445,19 +440,12 @@ void loop() {
     //------
   }
 
-  //    int currentVal = encoder.read();                                   //Store current value to variable
-  //    if (currentVal != DEF_VOL) {                                       //If volume has been changed
-  //      encoder.write(DEF_VOL);                                          //Reset to default
-  //      if (currentVal > DEF_VOL) {sendCommand(String("VOLUP"));}        //If encoder has been turned clockwise
-  //      else if (currentVal < DEF_VOL) {sendCommand(String("VOLDOWN"));} //Send steps to change by
-  //    }
-  //
 
 }
 
 void displayMetadata() {
-  lcd.setCursor(0, 0); lcd.print("                    ");
-  lcd.setCursor(0, 0); lcd.print(formatForDisplay(metadata.title));
+  lcd.setCursor(0, 0); lcd.print("                    "); //Clear line
+  lcd.setCursor(0, 0); lcd.print(formatForDisplay(metadata.title)); //Print formatted title
 
   lcd.setCursor(0, 1); lcd.print("                    ");
   lcd.setCursor(0, 1); lcd.print(formatForDisplay(metadata.artist));
@@ -467,9 +455,9 @@ void displayTime() {
   lcd.setCursor( 0, 3); lcd.print("     "); //Temp, clear a bit of space
   lcd.setCursor( 0, 3); lcd.print(secondsToTime(playback.currentTime));
 
-  String lengthStr = secondsToTime(metadata.timeLength);
-  lcd.setCursor(20 - lengthStr.length(), 3);
-  for (int i = 0; i <= lengthStr.length() - 1; i++) {
+  String lengthStr = secondsToTime(metadata.timeLength); //Stores track length as string
+  lcd.setCursor(20 - lengthStr.length(), 3); //Sets cursor position
+  for (int i = 0; i <= lengthStr.length() - 1; i++) { //Clears appropriate amount of space
     lcd.print(" "); //Clear space
   }
   lcd.setCursor(20 - lengthStr.length(), 3); lcd.print(lengthStr);      //Display the length
@@ -477,17 +465,16 @@ void displayTime() {
   //DISPLAY BAR
   //Find available space
   int lengthOfCurrentTime = secondsToTime(playback.currentTime).length();
-  int barLength = 20 - lengthOfCurrentTime - secondsToTime(metadata.timeLength).length();
+  int barLength = 20 - lengthOfCurrentTime - secondsToTime(metadata.timeLength).length(); //Find length of bar
   float progress = (float)playback.currentTime / (float)metadata.timeLength; //Get progress through track
   lcd.setCursor(lengthOfCurrentTime, 3);
   for (int i = 0; i <= barLength - 1; i++) {
     lcd.print("-"); //Display bar body
   }
+  
   //Plop + on bar
-  int pos = int(lengthOfCurrentTime + int(trunc(barLength * progress)));
-  //For some reason constrain doesn't work properly
-
-  lcd.setCursor(constrain(pos, lengthOfCurrentTime, lengthOfCurrentTime + barLength), 3); lcd.print("+");
+  int pos = int(lengthOfCurrentTime + int(trunc(barLength * progress))); //For some reason constrain doesn't work properly, use own function
+  lcd.setCursor(constrain(pos, lengthOfCurrentTime, lengthOfCurrentTime + barLength), 3); lcd.print("+"); //Plop
 
 }
 
@@ -514,6 +501,7 @@ void displayVolume() {
     lcd.setCursor(2, 2); lcd.print("    "); //Clear line
     int currentVal = encoder.read();
 
+    //Constrain values
     if (currentVal < 0) {
       currentVal = 0;
     }
@@ -521,16 +509,18 @@ void displayVolume() {
       currentVal = 125;
     }
 
+    //Print icon
     lcd.setCursor(0, 2); lcd.print("\x7\x8 ");
     lcd.print(currentVal); //Print volume on line 3
   }
 }
 
 String secondsToTime(int seconds) {
+  //Convert time in seconds to string with separators
   bool displayHours = true;
-  String secs = String(seconds % 60);
-  String mins = String((seconds / 60) % 60);
-  String hours = String((seconds / 3600) % 60);
+  String secs = String(seconds % 60); //No of seconds
+  String mins = String((seconds / 60) % 60); //No of minutes
+  String hours = String((seconds / 3600) % 60); //No of hours
 
   //If hours is unnecessary, do not display them
   if (hours == "0") {
@@ -545,7 +535,7 @@ String secondsToTime(int seconds) {
     mins = String("0" + mins);
   }
 
-  if (displayHours) {
+  if (displayHours) { //If hours is to be displayed
     return String(hours + ":" + mins + ":" + secs);
   } else {
     return String(mins + ":" + secs);
